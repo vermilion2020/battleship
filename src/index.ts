@@ -1,0 +1,30 @@
+import { WebSocketServer } from 'ws';
+import { BASE_PORT } from './utils/consts';
+import { messageHandler } from './utils/message-handler';
+import 'dotenv/config';
+import { GameSessionRepository } from './repository/game-session';
+
+const PORT = +process.env.PORT || BASE_PORT;
+
+const wss = new WebSocketServer({ port: PORT });
+const gameSessionRepository = new GameSessionRepository();
+
+wss.on('connection', (ws) => {
+  ws.on('message', (rawMessage) => {
+    messageHandler(gameSessionRepository, ws, rawMessage);
+  });
+
+  ws.on('close', () => {
+    gameSessionRepository.users.setUserOffline(ws);
+  });
+
+  ws.on('error', (error) => {
+    console.error(`WebSocket error: ${error}`);
+  });
+});
+
+process.on('SIGINT', () => {
+  gameSessionRepository.closeConnections();
+  wss.close();
+});
+  
