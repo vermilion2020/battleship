@@ -4,6 +4,8 @@ import { MessageType } from "./message-types";
 import { GameSessionRepository } from "../repository/game-session";
 import { register } from "../controller/register";
 import { respond } from "./send-response";
+import { addUserToRoom } from "../controller/add-user-to-room";
+import { createRoom } from "../controller/create-room";
 
 export const messageHandler = async (gameSessionRepository: GameSessionRepository, ws: WebSocket, rawMessage: RawData) => {
   const message = getBody(rawMessage);
@@ -12,6 +14,14 @@ export const messageHandler = async (gameSessionRepository: GameSessionRepositor
     switch (message.type) {
       case MessageType.reg:
         await register(gameSessionRepository, ws, message);
+        break;
+
+      case MessageType.create_room:
+        await createRoom(gameSessionRepository, ws);
+        break;
+
+      case MessageType.add_user_to_room:
+        await addUserToRoom(gameSessionRepository, ws, message);
         break;
     }
   } catch (error) {
