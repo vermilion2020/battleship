@@ -7,7 +7,8 @@ import { respond } from "./send-response";
 import { addUserToRoom } from "../controller/add-user-to-room";
 import { createRoom } from "../controller/create-room";
 import { addShips } from "../controller/add-ships";
-
+import { attack } from "../controller/attack";
+import { singlePlay } from "../controller/single-play";
 
 export const messageHandler = async (gameSessionRepository: GameSessionRepository, ws: WebSocket, rawMessage: RawData) => {
   const message = getBody(rawMessage);
@@ -30,6 +31,14 @@ export const messageHandler = async (gameSessionRepository: GameSessionRepositor
         await addShips(gameSessionRepository, ws, message);
         break;
 
+      case MessageType.attack:
+      case MessageType.randomAttack:  
+        await attack(gameSessionRepository, ws, message);
+        break;
+      
+      case MessageType.single_play:
+        await singlePlay(gameSessionRepository, ws);
+        break;
     }
   } catch (error) {
     respond(ws, MessageType.reg, { error: true, errorText: error });
