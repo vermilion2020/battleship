@@ -11,15 +11,15 @@ export class UserRepository {
     this.rooms = [];
   }
 
-  getUser(ws: WebSocket) {
+  async getUser(ws: WebSocket) {
     return this.users.find(user => user.ws === ws);
   }
 
-  getUserById(id: string) {
+  async getUserById(id: string) {
     return this.users.find(user => user.id === id);
   }
 
-  setUserOffline(ws: WebSocket) {
+  async setUserOffline(ws: WebSocket) {
     const userIndex = this.users.findIndex(user => user.ws === ws);
     if (userIndex === -1) {
       return;
@@ -58,9 +58,11 @@ export class UserRepository {
   }
 
   async addRoom(userId?: string) {
+    const user = await this.getUserById(userId);
     const newRoom = {
       id: uuidv4(),
       ...(userId && { idUser1: userId }),
+      ...(user && { nameUser1: user.name }),
     }
     this.rooms.push(newRoom);
     return newRoom;
@@ -71,15 +73,18 @@ export class UserRepository {
     if (!room) {
       return false;
     }
+    const user = await this.getUserById(idUser);
     if (room.idUser1 && room.idUser2) {
       return false;
     }
     if (!room.idUser1) {
       room.idUser1 = idUser;
+      room.nameUser1 = user.name;
     } else if (room.idUser1 === idUser) {
       return false;
     } else {
       room.idUser2 = idUser;
+      room.nameUser2 = user.name;
     }
     return room;
   }
@@ -90,11 +95,15 @@ export class UserRepository {
 
   async getAvailableRooms() {
     const rooms = this.rooms.filter(room => !room.idUser2 || !room.idUser1);
-    const roomsData = rooms.map(room => ({
+    const roomsData = rooms.map((room) => ({
       roomId: room.id,
       roomUsers: [{
         index: room.idUser1,
-        name: this.getUserById(room.idUser1)?.name }]
+        name: room.nameUser1,
+      }, {
+        index: room.idUser2,
+        name: room.nameUser2,
+      }]
       }));
     return roomsData;
   }

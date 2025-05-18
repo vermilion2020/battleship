@@ -75,7 +75,7 @@ export class GameSessionRepository {
     player.coordinates = drawMap(ships);
     session.playersData.set(idPlayer, player);
     this.gameSessions.set(idGame, session);
-    return true;
+    return player.coordinates;
   }
 
   async checkGameSessionReady(idGame: string) {
@@ -114,7 +114,7 @@ export class GameSessionRepository {
       winnerState.wins += 1;
       this.winners.set(idPlayer, winnerState);
     } else {
-      const userData = this.users.getUserById(idPlayer);
+      const userData = await this.users.getUserById(idPlayer);
       this.winners.set(idPlayer, { name: userData.name, wins: 1 });
     }
   }

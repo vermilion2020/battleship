@@ -3,12 +3,12 @@ import { getBody } from "./get-body";
 import { MessageType } from "./message-types";
 import { GameSessionRepository } from "../repository/game-session";
 import { register } from "../controller/register";
-import { respond } from "./send-response";
 import { addUserToRoom } from "../controller/add-user-to-room";
 import { createRoom } from "../controller/create-room";
 import { addShips } from "../controller/add-ships";
 import { attack } from "../controller/attack";
 import { singlePlay } from "../controller/single-play";
+import { logger } from "./logger";
 
 export const messageHandler = async (gameSessionRepository: GameSessionRepository, ws: WebSocket, rawMessage: RawData) => {
   const message = getBody(rawMessage);
@@ -41,6 +41,6 @@ export const messageHandler = async (gameSessionRepository: GameSessionRepositor
         break;
     }
   } catch (error) {
-    respond(ws, MessageType.reg, { error: true, errorText: error });
+    logger(message.type, error);
   }
 };

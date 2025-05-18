@@ -18,7 +18,7 @@ export const register = async (game: GameSessionRepository, ws: WebSocket, messa
     errorText: user.errorMessage
   });
 
-  const loggerMessage = !user.errorMessage ? `User ${setColor(user.name, 'blue')} successfully connected` : `User ${setColor(name, 'red')} registration failed: ${user.errorMessage}`;
+  const loggerMessage = !user.errorMessage ? `Player ${setColor(user.name, 'blue')} successfully connected` : `Player ${setColor(name, 'red')} registration failed: ${user.errorMessage}`;
 
   logger(MessageType.reg, loggerMessage);
 

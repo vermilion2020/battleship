@@ -11,7 +11,9 @@ export type User = {
 export type Room = {
   id: string;
   idUser1: string;
+  nameUser1: string;
   idUser2?: string;
+  nameUser2?: string;
 }
 
 export type RegisterResponse = {
