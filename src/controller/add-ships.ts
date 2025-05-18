@@ -1,4 +1,5 @@
 import { GameSessionRepository, singlePlayerBotId } from "../repository/game-session";
+import { generateShips } from "../utils/generate-map";
 import { logger, logShips, setColor } from "../utils/logger";
 import { Message, MessageType } from "../utils/message-types";
 import { respond } from "../utils/send-response";
@@ -38,7 +39,8 @@ export const addShips = async (game: GameSessionRepository, ws: WebSocket, messa
 
       const isSinglePlayer = await game.isSinglePlayer(gameId);
       if (isSinglePlayer) {
-        const result = await game.addShips(gameId, singlePlayerBotId, ships);
+        const botShips = generateShips();
+        const result = await game.addShips(gameId, singlePlayerBotId, botShips);
         if (!!result) {
           respond(ws, MessageType.start_game, { ships: ships, currentPlayerIndex: indexPlayer });
           respond(ws, MessageType.turn, {

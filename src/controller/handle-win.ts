@@ -1,4 +1,4 @@
-import { GameSessionRepository } from "../repository/game-session";
+import { GameSessionRepository, singlePlayerBotId } from "../repository/game-session";
 import { CellType } from "../repository/game.types";
 import { MessageType } from "../utils/message-types";
 import { respond } from "../utils/send-response";
@@ -8,7 +8,9 @@ import { updateWinners } from "./update-state";
 export const handleWin = async (game: GameSessionRepository, coordinates: number[][], currentPlayerId: string, ws: WebSocket, ws2?: WebSocket) => {
   const mapStat = coordinates.flat(2).findIndex(cell => cell === CellType.ship);
   if (mapStat === -1) {
-    await game.setWinner(currentPlayerId);
+    if (currentPlayerId !== singlePlayerBotId) {
+      await game.setWinner(currentPlayerId);
+    }
     const response = { winPlayer: currentPlayerId };
     respond(ws, MessageType.finish, response);
     if (ws2) {

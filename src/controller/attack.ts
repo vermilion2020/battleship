@@ -43,7 +43,8 @@ export const attack = async (game: GameSessionRepository, ws: WebSocket, message
     const { x, y } = getAttackCoordinates(message, coordinates);
     
     const isHit = coordinates[x][y] === CellType.ship;
-    if ((coordinates[x][y] === CellType.shot || coordinates[x][y] === CellType.miss) && !isSinglePlayer) {
+    const isAlreadyAttacked = coordinates[x][y] === CellType.shot || coordinates[x][y] === CellType.miss;
+    if (isAlreadyAttacked && !isSinglePlayer) {
 
       logger(message.type, `Player ${setColor(user1.name, 'blue')} attacked the position x:${setColor(x, 'yellow')}, y:${setColor(y, 'yellow')}. This cell is ${setColor('already attacked', 'red')}. Next player turn.`);
       return await nextTurn(gameId, idPlayer2, game, ws, ws2);
@@ -57,10 +58,11 @@ export const attack = async (game: GameSessionRepository, ws: WebSocket, message
       currentPlayer: indexPlayer,
       status: result.status
     }
-
-    respond(ws, MessageType.attack, response);
-    if (ws2) {
-      respond(ws2, MessageType.attack, response);
+    if (!isAlreadyAttacked) {
+      respond(ws, MessageType.attack, response);
+      if (ws2) {
+        respond(ws2, MessageType.attack, response);
+      }
     }
 
     const isWin = await handleWin(game, coordinates, indexPlayer, ws, ws2);

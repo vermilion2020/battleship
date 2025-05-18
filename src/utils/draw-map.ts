@@ -1,6 +1,6 @@
 import { Cell, CellType, Ship } from "../repository/game.types";
 
-const getMapTemplate = () => {
+export const getMapTemplate = () => {
   return new Array(10).fill(1).map(() => new Array(10).fill(CellType.empty));
 }
   

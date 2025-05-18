@@ -43,7 +43,6 @@ export enum HitStatus {
 }
 
 export type Ship = {
-  id: string;
   type: 'small' | "medium" | "large" | "huge";
   direction: boolean;
   length: number;
