@@ -1,17 +1,19 @@
-import { Ship, Cell } from "../repository/game.types";
+import { Ship, Cell, ShipType } from "../repository/game.types";
 import { getMapTemplate } from "./draw-map";
 
+
+
 const TEMPLATE = [
-  { type: 'huge', lenght: 4 },
-  { type: 'large', lenght: 3 },
-  { type: 'large', lenght: 3 },
-  { type: 'medium', lenght: 2 },
-  { type: 'medium', lenght: 2 },
-  { type: 'medium', lenght: 2 },
-  { type: 'small', lenght: 1 },
-  { type: 'small', lenght: 1 },
-  { type: 'small', lenght: 1 },
-  { type: 'small', lenght: 1 },
+  { type: ShipType.Huge, length: 4 },
+  { type: ShipType.Large, length: 3 },
+  { type: ShipType.Large, length: 3 },
+  { type: ShipType.Medium, length: 2 },
+  { type: ShipType.Medium, length: 2 },
+  { type: ShipType.Medium, length: 2 },
+  { type: ShipType.Small, length: 1 },
+  { type: ShipType.Small, length: 1 },
+  { type: ShipType.Small, length: 1 },
+  { type: ShipType.Small, length: 1 },
 ]
 
 const isCellValid = (x: number, y: number, length: number, direction: boolean, map: number[][]) => {
@@ -33,30 +35,27 @@ const isCellValid = (x: number, y: number, length: number, direction: boolean, m
   return true;
 }
 
-const placeShip = (ship: { type: string, lenght: number }, map: number[][]) => {
+const placeShip = (ship: { type: ShipType, length: number }, map: number[][]) => {
   const direction = Math.random() > 0.5;
+  const { type, length } = ship;
   let attempts = 0;
-  const maxAttempts = 100;
+  const MAX_ATTEMPTS = 100;
 
-  while (attempts < maxAttempts) {
+  while (attempts < MAX_ATTEMPTS) {
     const x = Math.floor(Math.random() * 10);
     const y = Math.floor(Math.random() * 10);
 
-    if (isCellValid(x, y, ship.lenght, direction, map)) {
+    if (isCellValid(x, y, length, direction, map)) {
       const shipCells: Cell[] = [];
-      for (let i = 0; i < ship.lenght; i++) {
-        if (direction) {
-          map[x][y + i] = 1;
-          shipCells.push({ x, y: y + i });
-        } else {
-          map[x + i][y] = 1;
-          shipCells.push({ x: x + i, y });
-        }
+      for (let i = 0; i < length; i++) {
+        const cell = { x: x + (direction ? 0 : i), y: y + (direction ? i : 0) };
+        map[cell.x][cell.y] = 1;
+        shipCells.push(cell);
       }
       return {
-        type: ship.type as 'small' | 'medium' | 'large' | 'huge',
+        type,
         direction,
-        length: ship.lenght,
+        length,
         position: { x, y }
       };
     }

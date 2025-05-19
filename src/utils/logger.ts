@@ -25,5 +25,12 @@ export const logger = (messageType: MessageType, message: string) => {
 
 export const logShips = (ships: number[][]) => {
   console.log(`Ships map:`);
-  console.log(ships.map(s1 => s1.map(s2 => s2 === 1 ? setColor('X', 'yellow') : setColor('O', 'gray')).join(' ')).join(EOL));
+  const reordered = ships[0].map((_, colIndex) => 
+    ships.map(row => row[colIndex])
+  );
+  
+  for (let i = 0; i < reordered.length; i++) {
+    const row = reordered[i].map(cell => cell === 1 ? setColor('X', 'yellow') : setColor('O', 'gray')).join(' ');
+    console.log(row);
+  }
 }

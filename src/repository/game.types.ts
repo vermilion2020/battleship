@@ -42,8 +42,15 @@ export enum HitStatus {
   killed = 'killed'
 }
 
+export enum ShipType {
+  Huge = 'huge',
+  Large = 'large',
+  Medium = 'medium',
+  Small = 'small',
+}
+
 export type Ship = {
-  type: 'small' | "medium" | "large" | "huge";
+  type: ShipType;
   direction: boolean;
   length: number;
   position: Cell;
