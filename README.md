@@ -6,6 +6,19 @@
 
 - Node.js >= 22.14.0
 
+## UI for Battleship game
+
+```bash
+git clone git@github.com:rolling-scopes-school/websockets-ui.git
+cd websockets-ui
+
+npm install
+
+npm run start
+```
+
+[Frontend will be available here](http://localhost:8181/)
+
 ## Installation
 
 ```bash
